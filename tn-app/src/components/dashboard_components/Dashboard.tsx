@@ -26,7 +26,7 @@ export function Dashboard() {
 
     const updateUserBalance = () => {
         getUserBalance();
-    };
+    }
 
     return (<>
         <div>
