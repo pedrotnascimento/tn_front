@@ -1,8 +1,6 @@
-import React, { useState } from 'react';
-import logo from './logo.svg';
+import { useState } from 'react';
 import './App.css';
 import { Login } from './components/Login';
-
 import { Logout } from './components/Logout';
 import { Dashboard } from './components/dashboard_components/Dashboard';
 

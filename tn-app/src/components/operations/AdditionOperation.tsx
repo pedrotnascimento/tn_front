@@ -7,14 +7,17 @@ export const AdditionOperation = (props:
     }) => {
     const [value1, setValue1] = useState(0);
     const [value2, setValue2] = useState(0);
+    
     const handleChangeValue1 = (e: any) => {
         setValue1(e.target.value);
         props.registerValues([e.target.value, value2]);
     };
+
     const handleChangeValue2 = (e: any) => {
         setValue2(e.target.value);
         props.registerValues([value1, e.target.value]);
     };
+
     return <>
         <div>
             <input value={value1}

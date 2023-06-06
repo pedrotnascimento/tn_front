@@ -1,9 +1,11 @@
-import { ElementType, FunctionComponentElement, useState } from "react";
+import { useState } from "react";
 import { AdditionOperation } from "../operations/AdditionOperation";
 import { SelectOperation } from "./SelectedOperation";
 import axios from "axios";
 
-export const OperationDashboard = () => {
+export const OperationDashboard = (props: {
+    onOperateResult: () => void;
+}) => {
     const operations = new Map<string, any>();
     const [arrayValues, setArrayValues] = useState<object[] | undefined>([]);
     const [result, setResult] = useState<object | undefined>(undefined);
@@ -21,7 +23,7 @@ export const OperationDashboard = () => {
         const url = "http://127.0.0.1:5000/v1/operations";
         const data = {
             arguments: arrayValues,
-            operation_type: selectedOperation
+            operationType: selectedOperation
         };
         const token = localStorage.getItem("token");
         const headers = {
@@ -32,6 +34,8 @@ export const OperationDashboard = () => {
         axios.post(url, data, headers).then((response: any) => {
             if (response.data) {
                 setResult(response.data.result);
+                props.onOperateResult();
+
             }
         });
     };
@@ -39,7 +43,6 @@ export const OperationDashboard = () => {
     operations.set("addition", <AdditionOperation
         registerValues={registerValues}
         result={result} />);
-
 
     return <>
         <SelectOperation

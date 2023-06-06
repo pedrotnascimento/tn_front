@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import './selectedOperation.css';
+
 export const SelectOperation = (props: {
     onSelectOperation: (val: string) => void,
     operations: Map<string, () => void>;
