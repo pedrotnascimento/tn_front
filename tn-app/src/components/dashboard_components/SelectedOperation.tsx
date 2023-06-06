@@ -3,9 +3,10 @@ import './selectedOperation.css';
 
 export const SelectOperation = (props: {
     onSelectOperation: (val: string) => void,
-    operations: Map<string, () => void>;
+    operations: Map<string, any>;
 }) => {
     const [selected, setSelected] = useState("");
+    
     const handleSelectChange = (e: any) => {
         const selected = e.target.value;
         props.onSelectOperation(selected);

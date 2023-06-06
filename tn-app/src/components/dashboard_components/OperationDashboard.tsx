@@ -1,15 +1,17 @@
 import { useState } from "react";
-import { AdditionOperation } from "../operations/AdditionOperation";
+import { DivisionOperation } from "../operations/DivisionOperation";
 import { SelectOperation } from "./SelectedOperation";
 import axios from "axios";
+import { OPERATIONS } from "../operations/operationRegistries";
 
 export const OperationDashboard = (props: {
     onOperateResult: () => void;
 }) => {
-    const operations = new Map<string, any>();
     const [arrayValues, setArrayValues] = useState<object[] | undefined>([]);
     const [result, setResult] = useState<object | undefined>(undefined);
     const [selectedOperation, setSelectedOperation] = useState("");
+
+
 
     const handleOperationChange = (val: string) => {
         setSelectedOperation(val);
@@ -18,6 +20,7 @@ export const OperationDashboard = (props: {
     const registerValues = (o: object[] | undefined): void => {
         setArrayValues(o);
     };
+
 
     const operate = () => {
         const url = "http://127.0.0.1:5000/v1/operations";
@@ -40,16 +43,15 @@ export const OperationDashboard = (props: {
         });
     };
 
-    operations.set("addition", <AdditionOperation
-        registerValues={registerValues}
-        result={result} />);
 
     return <>
         <SelectOperation
             onSelectOperation={handleOperationChange}
-            operations={operations}
+            operations={OPERATIONS}
         />
-        {operations.get(selectedOperation)}
+        {OPERATIONS.get(selectedOperation) ?
+            OPERATIONS.get(selectedOperation)(registerValues, result) :
+            ""}
         <div>
             <button onClick={operate}>Operate</button>
         </div>
