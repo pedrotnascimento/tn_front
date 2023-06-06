@@ -5,38 +5,32 @@ import { RandomStringOperation } from "./RandomStringOperation";
 import { SquareRootOperation } from "./SquareRootOperation";
 import { SubtractionOperation } from "./SubtractionOperation";
 
-export const OPERATIONS = new Map<string, any>();
+export const OPERATIONS = new Map<
+    string,
+    { type: string, name: string, getWidget: any; }
+>();
 
-const additionOp = (registerValues: any, result: any) => (
-    <AdditionOperation
-        registerValues={registerValues}
-        result={result} />);
-const divisionOp = (registerValues: any, result: any) => (
-    <DivisionOperation
-        registerValues={registerValues}
-        result={result} />
-);
-const multiplicationOp = (registerValues: any, result: any) => (
-    <MultiplicationOperation
-        registerValues={registerValues}
-        result={result} />
-);
-const subtractionOp = (registerValues: any, result: any) => (
-    <SubtractionOperation
-        registerValues={registerValues}
-        result={result} />);
-const squareRootOp = (registerValues: any, result: any) => (
-    <SquareRootOperation
-        registerValues={registerValues}
-        result={result} />);
-const randomStringOp = (registerValues: any, result: any) => (
-    <RandomStringOperation
-        registerValues={registerValues}
-        result={result} />);
+const widgetFactory = (type: string, name: string, Widget: any) => {
+    return {
+        type,
+        name,
+        getWidget: (registerValues: any, result: any) => (
+            <Widget
+                registerValues={registerValues}
+                result={result} />)
+    };
+};
 
-OPERATIONS.set("addition", additionOp);
-OPERATIONS.set("division", divisionOp);
-OPERATIONS.set("multiplication", multiplicationOp);
-OPERATIONS.set("subtraction", subtractionOp);
-OPERATIONS.set("squareRoot", squareRootOp);
-OPERATIONS.set("randomString", randomStringOp);
+const additionOp = widgetFactory("addition", "Addition", AdditionOperation);
+const divisionOp = widgetFactory("division", "Division", DivisionOperation);
+const multiplicationOp = widgetFactory("multiplication", "Multiplication", MultiplicationOperation);
+const subtractionOp = widgetFactory("subtraction", "Subtraction", SubtractionOperation);
+const squareRootOp = widgetFactory("square_root", "Square Root", SquareRootOperation);
+const randomStringOp = widgetFactory("random_string_generation", "Random String", RandomStringOperation);
+
+OPERATIONS.set(additionOp.type, additionOp);
+OPERATIONS.set(divisionOp.type, divisionOp);
+OPERATIONS.set(multiplicationOp.type, multiplicationOp);
+OPERATIONS.set(subtractionOp.type, subtractionOp);
+OPERATIONS.set(squareRootOp.type, squareRootOp);
+OPERATIONS.set(randomStringOp.type, randomStringOp);

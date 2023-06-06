@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Form } from "bootstrap-4-react";
 
 export const TwoOperatorsTemplate = (props:
     {
@@ -21,11 +22,11 @@ export const TwoOperatorsTemplate = (props:
 
     return <>
         <div>
-            <input value={value1}
+            <Form.Input value={value1}
                 onChange={handleChangeValue1}
                 placeholder="Value 1" />
             {props.symbol}
-            <input value={value2}
+            <Form.Input value={value2}
                 onChange={handleChangeValue2}
                 placeholder="Value 2" />
             🟰

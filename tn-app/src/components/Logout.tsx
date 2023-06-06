@@ -1,4 +1,5 @@
-import { useCallback, useState } from "react"
+import { Form, Button } from 'bootstrap-4-react';
+
 
 export function Logout(props: { onLogout: () => void }) {
     const logout = () => {
@@ -8,7 +9,7 @@ export function Logout(props: { onLogout: () => void }) {
 
     return (
         <div>
-            <button onClick={logout}>Logout</button>
+            <Button danger  onClick={logout}>Logout</Button>
         </div>
     );
 }

@@ -3,3 +3,7 @@
     flex-direction: row;
     justify-content: space-around;
 }
+
+.button-tab{
+    padding: 0 10px;
+}

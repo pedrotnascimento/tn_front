@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { DivisionOperation } from "../operations/DivisionOperation";
 import { SelectOperation } from "./SelectedOperation";
 import axios from "axios";
 import { OPERATIONS } from "../operations/operationRegistries";
+import { BDiv, Button } from "bootstrap-4-react";
+import "./operationDashboard.css";
 
 export const OperationDashboard = (props: {
     onOperateResult: () => void;
@@ -10,8 +11,6 @@ export const OperationDashboard = (props: {
     const [arrayValues, setArrayValues] = useState<object[] | undefined>([]);
     const [result, setResult] = useState<object | undefined>(undefined);
     const [selectedOperation, setSelectedOperation] = useState("");
-
-
 
     const handleOperationChange = (val: string) => {
         setSelectedOperation(val);
@@ -44,16 +43,21 @@ export const OperationDashboard = (props: {
     };
 
 
-    return <>
-        <SelectOperation
-            onSelectOperation={handleOperationChange}
-            operations={OPERATIONS}
-        />
-        {OPERATIONS.get(selectedOperation) ?
-            OPERATIONS.get(selectedOperation)(registerValues, result) :
-            ""}
-        <div>
-            <button onClick={operate}>Operate</button>
+    return <div className="operation-widgets">
+        <BDiv display="flex" justifyContent="center" bor>
+            <SelectOperation
+                onSelectOperation={handleOperationChange}
+                operations={OPERATIONS}
+            />
+        </BDiv>
+
+        <BDiv p={2} display="flex" flex="column" >
+            {OPERATIONS.get(selectedOperation) ?
+                OPERATIONS.get(selectedOperation)?.getWidget(registerValues, result) :
+                ""}
+        </BDiv>
+        <div className="operate-button">
+            <Button primary onClick={operate}>Operate</Button>
         </div>
-    </>;
+    </div>;
 };

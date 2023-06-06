@@ -1,9 +1,11 @@
 import { useState } from "react";
 import axios from 'axios';
-
+import { Form, Alert } from "bootstrap-4-react";
+import "./login.css";
 
 export const Login = (props: { onLogged: () => void; }) => {
     const [user, setUser] = useState({ username: "", password: "" });
+    const [errorOnLogin, setErrorOnLogin] = useState(false);
 
     const handleUsernameChange = (e: any) => {
         setUser({ ...user, username: e.target.value });
@@ -16,7 +18,7 @@ export const Login = (props: { onLogged: () => void; }) => {
     const login = (e: any) => {
         e.preventDefault();
         const url = "http://127.0.0.1:5000/v1/authenticate";
-
+        setErrorOnLogin(false);
         axios.post(url, user)
             .then((response) => {
                 if (response.data.token) {
@@ -26,24 +28,29 @@ export const Login = (props: { onLogged: () => void; }) => {
             })
             .catch((error) => {
                 console.error('Ocorreu um erro:', error);
+                setErrorOnLogin(true);
             });
     };
 
     return (
-        <>
-            <form onSubmit={login} >
+
+        <div className="login-container">
+            <p>Loggin below</p>
+            <Form onSubmit={login} >
                 <div>
                     <label >Username</label>
-                    <input value={user.username} onChange={handleUsernameChange} />
+                    <Form.Input value={user.username} onChange={handleUsernameChange} />
                 </div>
                 <div>
                     <label >Password</label>
-                    <input value={user.password} onChange={handlePasswordChange} />
+                    <Form.Input value={user.password} onChange={handlePasswordChange} />
                 </div>
                 <div>
-                    <input type="submit" value="Login" />
+                    <Form.Input primary type="submit" value="Login" />
                 </div>
-            </form>
-        </>
+            </Form>
+            {errorOnLogin && <Alert danger>Wrong password or username</Alert>}
+        </div>
+
     );
 };
