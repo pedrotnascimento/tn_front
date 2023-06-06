@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react"
 
-export function Logout(props: any) {
+export function Logout(props: { onLogout: () => void }) {
     const logout = () => {
         localStorage.removeItem("token");
         props.onLogout();

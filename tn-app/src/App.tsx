@@ -4,19 +4,21 @@ import './App.css';
 import { Login } from './components/Login';
 
 import { Logout } from './components/Logout';
+import { Dashboard } from './components/dashboard_components/Dashboard';
 
 
 function App() {
   const token = localStorage.getItem("token");
   const [isLogged, setLogged] = useState(!!token);
-  const onLoggedHandle: any = () => setLogged(true);
-  const onLogoutHandle: any = () => setLogged(false);
+  const onLoggedInHandle: () => void = () => setLogged(true);
+  const onLogoutHandle: () => void = () => setLogged(false);
   const loggedComponents = <>
-  <Logout onLogout={onLogoutHandle} />
-  </> 
+    <Logout onLogout={onLogoutHandle} />
+    <Dashboard></Dashboard>
+  </>;
   return (
     <div className="App">
-      {isLogged ? loggedComponents : <Login onLogged={onLoggedHandle} />}
+      {isLogged ? loggedComponents : <Login onLogged={onLoggedInHandle} />}
     </div>
   );
 }
