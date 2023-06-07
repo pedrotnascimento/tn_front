@@ -4,7 +4,6 @@ import { Login } from './components/Login';
 import { Logout } from './components/Logout';
 import { Dashboard } from './components/dashboard_components/Dashboard';
 
-
 function App() {
   const token = localStorage.getItem("token");
   const [isLogged, setLogged] = useState(!!token);

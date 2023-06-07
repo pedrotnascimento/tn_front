@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useTable, usePagination, useSortBy, useFilters } from 'react-table';
+import { useTable, usePagination, useSortBy } from 'react-table';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button } from "bootstrap-4-react";
-import axios from "axios";
+import { deleteRecordApi, getRecordsApi } from '../../services';
 
 export function OperationRecords() {
     const [data, setData] = useState([]);
@@ -16,19 +16,14 @@ export function OperationRecords() {
 
     const fetchData = async (pageIndex, pageSize, sortField, sortDirection) => {
         try {
-            const url = 'http://127.0.0.1:5000/v1/records';
-            const token = localStorage.getItem("token");
-            const response = await axios.get(url, {
-                headers: {
-                    Authorization: token
-                },
-                params: {
-                    page: pageIndex + 1,
-                    perPage: pageSize,
+            const response = await getRecordsApi(
+                {
+                    pageIndex: pageIndex + 1,
+                    pageSize: pageSize,
                     sortField: sortField,
                     sortDirection: sortDirection
-                },
-            });
+                }
+            );
 
             setData(response.data.data);
             setPageCount(response.data.pages);
@@ -38,42 +33,37 @@ export function OperationRecords() {
     };
 
     const columns = useMemo(
-        () => [
-            { Header: 'ID', accessor: 'id' },
-            { Header: 'Operation', accessor: 'operationType' },
-            { Header: 'Response', accessor: 'operationResponse' },
-            { Header: 'UserBalance', accessor: 'userBalance' },
-            {
-                Header: 'Actions',
-                Cell: ({ row }) => (
-                    <Button danger onClick={() => excludeRegistry(row.original)}>DELETE</Button>
-                ),
-            },
-        ],
+        () => {
+
+            return [
+                { Header: 'ID', accessor: 'id' },
+                { Header: 'Operation', accessor: 'operationType' },
+                { Header: 'Response', accessor: 'operationResponse' },
+                { Header: 'UserBalance', accessor: 'userBalance' },
+                {
+                    Header: 'Actions',
+                    Cell: ({ row }) => (
+                        <Button danger onClick={() => excludeRegistry(row.original)}>DELETE</Button>
+                    ),
+                },
+            ];
+        },
         []
     );
 
     const excludeRegistry = (row) => {
-
-        const url = 'http://127.0.0.1:5000/v1/records/' + row.id;
-        const token = localStorage.getItem("token");
-        axios.delete(url, {
-            headers: {
-                Authorization: token
-            },
-        }).then(() => {
+        deleteRecordApi(row.id).then(() => {
             fetchData(pageIndex, pageSize, sortField, sortDirection);
         }).catch(() => {
             console.error("Error on delete");
         });
-
     };
 
     const handlePageChange = (pageIndex) => {
         gotoPage(pageIndex);
         fetchData(pageIndex, pageSize, sortField, sortDirection);
     };
-    
+
     const handlePageSize = (pageSize) => {
         setPageSize(Number(pageSize));
         fetchData(pageIndex, pageSize, sortField, sortDirection);
@@ -113,8 +103,6 @@ export function OperationRecords() {
         canNextPage,
         pageOptions,
         gotoPage,
-        nextPage,
-        previousPage,
         setPageSize,
         state: { pageIndex, pageSize },
     } = useTable(
@@ -184,7 +172,8 @@ export function OperationRecords() {
                 <select
                     value={pageSize}
                     onChange={(e) => {
-                        handlePageSize(e.target.value)}}
+                        handlePageSize(e.target.value);
+                    }}
                 >
                     {[3, 10, 50].map((pageSize) => (
                         <option key={pageSize} value={pageSize}>

@@ -1,7 +1,7 @@
 import { useState } from "react";
-import axios from 'axios';
 import { Form, Alert } from "bootstrap-4-react";
 import "./login.css";
+import { loginApi } from "../services";
 
 export const Login = (props: { onLogged: () => void; }) => {
     const [user, setUser] = useState({ username: "", password: "" });
@@ -17,19 +17,16 @@ export const Login = (props: { onLogged: () => void; }) => {
 
     const login = (e: any) => {
         e.preventDefault();
-        const url = "http://127.0.0.1:5000/v1/authenticate";
         setErrorOnLogin(false);
-        axios.post(url, user)
-            .then((response) => {
-                if (response.data.token) {
-                    localStorage.setItem("token", response.data.token);
-                    props.onLogged();
-                }
-            })
-            .catch((error) => {
-                console.error('Ocorreu um erro:', error);
-                setErrorOnLogin(true);
-            });
+        loginApi(user).then((response) => {
+            if (response.data.token) {
+                localStorage.setItem("token", response.data.token);
+                props.onLogged();
+            }
+        }).catch((error) => {
+            console.error('Ocorreu um erro:', error);
+            setErrorOnLogin(true);
+        });
     };
 
     return (

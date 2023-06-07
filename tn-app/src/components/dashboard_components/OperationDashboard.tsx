@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { SelectOperation } from "./SelectedOperation";
-import axios from "axios";
 import { OPERATIONS } from "../operations/operationRegistries";
 import { BDiv, Button } from "bootstrap-4-react";
 import "./operationDashboard.css";
+import { operationApi } from "../../services";
 
 export const OperationDashboard = (props: {
     onOperateResult: () => void;
@@ -22,18 +22,8 @@ export const OperationDashboard = (props: {
 
 
     const operate = () => {
-        const url = "http://127.0.0.1:5000/v1/operations";
-        const data = {
-            arguments: arrayValues,
-            operationType: selectedOperation
-        };
-        const token = localStorage.getItem("token");
-        const headers = {
-            headers: {
-                'Authorization': token
-            }
-        };
-        axios.post(url, data, headers).then((response: any) => {
+
+        operationApi(arrayValues, selectedOperation).then((response: any) => {
             if (response.data) {
                 setResult(response.data.result);
                 props.onOperateResult();
