@@ -44,7 +44,7 @@ export const OperationDashboard = (props: {
 
 
     return <div className="operation-widgets">
-        <BDiv display="flex" justifyContent="center" bor>
+        <BDiv display="flex" justifyContent="center">
             <SelectOperation
                 onSelectOperation={handleOperationChange}
                 operations={OPERATIONS}

@@ -7,33 +7,15 @@ import axios from "axios";
 export function OperationRecords() {
     const [data, setData] = useState([]);
     const [pageCount, setPageCount] = useState(0);
-    
+    const [sortField, setSortField] = useState("");
+    const [sortDirection, setSortDirection] = useState("");
+
     useEffect(() => {
-        
-        fetchData(pageIndex);
+        fetchData(pageIndex, pageSize, sortField, sortDirection);
     }, []);
 
-    const fetchOperations = async ()=>{
-
-            
-        const url = 'http://127.0.0.1:5000/v1/operations';
-        const token = localStorage.getItem("token");
-        const response = await axios.get(url, {
-            headers: {
-                Authorization: token
-            },
-            params: {
-                page: pageIndex + 1,
-                perPage: pageSize,
-            },
-        });
-        return response.data;
-    }
-
-    const fetchData = async (pageIndex) => {
+    const fetchData = async (pageIndex, pageSize, sortField, sortDirection) => {
         try {
-            
-            
             const url = 'http://127.0.0.1:5000/v1/records';
             const token = localStorage.getItem("token");
             const response = await axios.get(url, {
@@ -43,14 +25,16 @@ export function OperationRecords() {
                 params: {
                     page: pageIndex + 1,
                     perPage: pageSize,
+                    sortField: sortField,
+                    sortDirection: sortDirection
                 },
             });
-            
+
             setData(response.data.data);
             setPageCount(response.data.pages);
         } catch (error) {
             console.error('Error fetching data:', error);
-        } 
+        }
     };
 
     const columns = useMemo(
@@ -59,14 +43,65 @@ export function OperationRecords() {
             { Header: 'Operation', accessor: 'operationType' },
             { Header: 'Response', accessor: 'operationResponse' },
             { Header: 'UserBalance', accessor: 'userBalance' },
+            {
+                Header: 'Actions',
+                Cell: ({ row }) => (
+                    <Button danger onClick={() => excludeRegistry(row.original)}>DELETE</Button>
+                ),
+            },
         ],
         []
     );
 
+    const excludeRegistry = (row) => {
+
+        const url = 'http://127.0.0.1:5000/v1/records/' + row.id;
+        const token = localStorage.getItem("token");
+        axios.delete(url, {
+            headers: {
+                Authorization: token
+            },
+        }).then(() => {
+            fetchData(pageIndex, pageSize, sortField, sortDirection);
+        }).catch(() => {
+            console.error("Error on delete");
+        });
+
+    };
+
     const handlePageChange = (pageIndex) => {
         gotoPage(pageIndex);
-        fetchData(pageIndex);
-      };
+        fetchData(pageIndex, pageSize, sortField, sortDirection);
+    };
+    
+    const handlePageSize = (pageSize) => {
+        setPageSize(Number(pageSize));
+        fetchData(pageIndex, pageSize, sortField, sortDirection);
+    };
+    const handleSort = (column) => {
+        console.log(column);
+        if (column.isSorted) {
+            if (column.isSortedDesc) {
+                handleSortDesc(column);
+            }
+            else {
+                handleSortAsc(column);
+            }
+        }
+    };
+    const handleSortDesc = (column) => {
+        setSortField(column.id);
+        setSortDirection("desc");
+        fetchData(pageIndex, pageSize, column.id, "desc");
+        return ' 🔼';
+    };
+
+    function handleSortAsc(column) {
+        setSortField(column.id);
+        setSortDirection("asc");
+        fetchData(pageIndex, pageSize, column.id, "asc");
+        return ' 🔽';
+    }
 
     const {
         getTableProps,
@@ -86,12 +121,16 @@ export function OperationRecords() {
         {
             columns,
             data,
-            initialState: { pageIndex: 0, pageSize: 3 },
-            manualPagination: true, // Enable manual pagination
+            initialState: { pageIndex: 0, pageSize: 3, sortBy: [], sortOrder: '' },
+            manualPagination: true,
+            manualSortBy: true,
+            onSortingChange: handleSort,
             pageCount,
         },
+        useSortBy,
         usePagination
     );
+
 
 
     return (
@@ -101,7 +140,14 @@ export function OperationRecords() {
                     {headerGroups.map((headerGroup) => (
                         <tr {...headerGroup.getHeaderGroupProps()}>
                             {headerGroup.headers.map((column) => (
-                                <th {...column.getHeaderProps()}>{column.render('Header')}</th>
+                                <th {...column.getHeaderProps(column.getSortByToggleProps())}
+                                >
+                                    {column.render('Header')}
+                                    <span>
+                                        {column.isSorted ? (column.isSortedDesc ? ' 🔽' : ' 🔼') : ''}
+                                    </span>
+
+                                </th>
                             ))}
                         </tr>
                     ))}
@@ -121,10 +167,10 @@ export function OperationRecords() {
             </table>
             <div className="pagination">
 
-                <Button onClick={() =>  handlePageChange(pageIndex-1)} disabled={!canPreviousPage}>
+                <Button onClick={() => handlePageChange(pageIndex - 1)} disabled={!canPreviousPage}>
                     {'<'}
                 </Button>
-                <Button onClick={() =>   handlePageChange(pageIndex+1)} disabled={!canNextPage}>
+                <Button onClick={() => handlePageChange(pageIndex + 1)} disabled={!canNextPage}>
                     {'>'}
                 </Button>
 
@@ -138,8 +184,7 @@ export function OperationRecords() {
                 <select
                     value={pageSize}
                     onChange={(e) => {
-                        setPageSize(Number(e.target.value));
-                    }}
+                        handlePageSize(e.target.value)}}
                 >
                     {[3, 10, 50].map((pageSize) => (
                         <option key={pageSize} value={pageSize}>
@@ -150,4 +195,5 @@ export function OperationRecords() {
             </div>
         </div>
     );
+
 }
