@@ -15,13 +15,11 @@ export const OneOperatorTemplate = (props:
     };
 
 
-    return <>
-        <div>
-            {props.symbol}
-            <Form.Input value={value1}
-                onChange={handleChangeValue1}
-                placeholder="Value 1" />🟰
-            <>{props.result ? props.result : "?"}</>
-        </div>
-    </>;
+    return <div>
+        {props.symbol}
+        <Form.Input value={value1}
+            onChange={handleChangeValue1}
+            placeholder="Value 1" />🟰
+        <>{props.result ? props.result : "?"}</>
+    </div>;
 };

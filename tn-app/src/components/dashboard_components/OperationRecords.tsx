@@ -16,17 +16,19 @@ export function OperationRecords() {
 
     const fetchData = async (pageIndex, pageSize, sortField, sortDirection) => {
         try {
-            const response = await getRecordsApi(
+            const response: any = await getRecordsApi(
                 {
                     pageIndex: pageIndex + 1,
                     pageSize: pageSize,
                     sortField: sortField,
                     sortDirection: sortDirection
                 }
-            );
-
-            setData(response.data.data);
-            setPageCount(response.data.pages);
+            ).catch((e)=>{
+                console.error("Error on getting records");
+            });
+            const dataResponse = response && response.data;
+            setData(dataResponse && dataResponse.data );
+            setPageCount(dataResponse && dataResponse.pages);
         } catch (error) {
             console.error('Error fetching data:', error);
         }

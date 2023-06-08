@@ -27,8 +27,11 @@ export const OperationDashboard = (props: {
             if (response.data) {
                 setResult(response.data.result);
                 props.onOperateResult();
-
+                setArrayValues([])
             }
+        }).catch((e: any) => {
+            alert("ERROR: " + e.response.data.error);
+            console.error(e.response.data.error);
         });
     };
 
