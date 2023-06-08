@@ -32,3 +32,5 @@ You will also see any lint errors in the console.
 
 - Create new task on AWS ECR (Elastic Container Registry) Service "# tn_front" 
 
+## Production Load Balance
+> http://tn-ui-alb-tutorial-1538678504.sa-east-1.elb.amazonaws.com/
